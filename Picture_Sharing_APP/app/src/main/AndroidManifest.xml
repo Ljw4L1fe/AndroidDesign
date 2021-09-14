@@ -20,7 +20,9 @@
         <activity android:name=".ChangePwdActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity" />
-        <activity android:name=".SettingActivity">
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".MainActivity"/>
+            <activity android:name=".MomentActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,4 +30,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

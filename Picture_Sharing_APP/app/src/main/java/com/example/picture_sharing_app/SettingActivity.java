@@ -22,8 +22,15 @@ public class SettingActivity extends AppCompatActivity {
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
             public void onClick(View v) {
-//                Intent i=new Intent(RegisterActivity.this,LoginActivity.class);
-//                startActivity(i);
+                Intent i=new Intent(SettingActivity.this,MainActivity.class);
+                startActivity(i);
+            }
+        });
+        //退出登录按钮点击事件
+        btExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

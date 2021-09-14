@@ -50,11 +50,12 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        //性别选择
         radiogroup_gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {  //获取所选择值
                 RadioButton check = (RadioButton) findViewById(checkedId);
-                System.out.println(check.getText().toString().trim());
+                System.out.println(check.getText().toString().trim());//check.getText().toString().trim()值为男或女
             }
         });
         ivselectimg.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +68,8 @@ public class ProfileActivity extends AppCompatActivity {
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(i);
             }
         });
     }

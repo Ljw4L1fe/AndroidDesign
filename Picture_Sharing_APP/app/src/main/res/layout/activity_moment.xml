@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MomentActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/moment_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/toolbar_background"
+        android:theme="@style/ToolbarMenuTheme"
+        app:navigationIcon="@drawable/ic_outline_arrow_back_ios_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title=" "
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/moment_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:singleLine="true"
+            android:text="图片动态"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/moment_toolbar"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:id="@+id/moment_rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="MissingConstraints">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/moment_head"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:src="@mipmap/pic1"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="1dp" />
+
+            <TextView
+                android:id="@+id/moment_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="70dp"
+                android:layout_marginTop="10dp"
+                android:text="asdfg"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/moment_likecount"
+                android:text="20"
+                android:textSize="20sp"
+                android:layout_marginLeft="330dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/moment_like"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="360dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ic_outline_favorite_24" />
+
+            <ImageView
+                android:id="@+id/moment_image"
+                android:layout_width="match_parent"
+                android:layout_height="320dp"
+                android:layout_below="@+id/moment_head"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/pic1" />
+
+            <ImageView
+                android:id="@+id/moment_share"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/moment_image"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_outline_near_me_24" />
+
+            <ImageView
+                android:id="@+id/moment_download"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/moment_image"
+                android:layout_marginLeft="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/ic_baseline_get_app_24" />
+
+            <TextView
+                android:id="@+id/moment_time"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/moment_image"
+                android:layout_marginLeft="300dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:text="2021.12.12"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/moment_border"
+                android:layout_width="match_parent"
+                android:layout_height="7dp"
+                android:layout_below="@+id/moment_share"
+                android:background="#E5E5EA"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/moment_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/moment_border"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:text="标题"
+                android:textSize="27sp"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:id="@+id/moment_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/moment_title"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:text="文字描述内容"
+                android:textSize="20sp"
+                tools:ignore="MissingConstraints" />
+        </RelativeLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

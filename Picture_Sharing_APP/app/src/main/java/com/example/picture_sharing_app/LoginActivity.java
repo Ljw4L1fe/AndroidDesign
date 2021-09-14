@@ -57,6 +57,12 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        btLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击登录后触发的事件
+            }
+        });
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

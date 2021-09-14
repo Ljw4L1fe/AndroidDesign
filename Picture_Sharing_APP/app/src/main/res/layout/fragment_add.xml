@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AddFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- TODO: Update blank fragment layout -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="50dp">
+
+            <ImageView
+                android:id="@+id/add_image_view"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@mipmap/pic1"
+                app:layout_constraintLeft_toRightOf="@+id/add_image"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/add_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_baseline_add_24"
+                tools:ignore="MissingConstraints" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <EditText
+            android:id="@+id/add_title"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:hint="输入标题"
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <TextView
+            android:id="@+id/add_subtitle"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginLeft="48dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="4dp"
+            android:text="描述内容"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+
+        <EditText
+            android:id="@+id/add_subcontext"
+            android:layout_width="320dp"
+            android:layout_height="150dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:background="@drawable/edittext_border"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:maxLines="8"
+            android:scrollHorizontally="false"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_add_upload"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_selector"
+            android:text="发布"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</FrameLayout>
