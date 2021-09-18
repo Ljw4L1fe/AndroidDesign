@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string name="host">
+    192.168.168.164
+</string>
+   <integer name="post">
+       4040
+   </integer>
+    <!-- option    操作
+            1     发送登录信息
+            2
+            3
+    -->
+</resources>

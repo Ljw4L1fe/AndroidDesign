@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PersonFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/person_head"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:src="@mipmap/pic1"
+                tools:ignore="MissingConstraints" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toRightOf="@+id/person_head"
+                tools:ignore="MissingConstraints">
+
+                <TextView
+                    android:id="@+id/person_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="用户名001"
+                    android:textSize="18sp"
+                    app:layout_constraintLeft_toRightOf="@+id/person_head"
+                    app:layout_editor_absoluteY="10dp"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/person_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="29dp"
+                    android:layout_gravity="center"
+                    android:text="男"
+                    android:textSize="15sp"
+                    tools:ignore="MissingConstraints" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="75dp"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:ignore="MissingConstraints">
+
+                <Button
+                    android:id="@+id/btn_person_profile"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_selector"
+                    android:text="编辑个人资料"
+                    android:textColor="@color/white"
+                    app:layout_editor_absoluteY="24dp"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="288dp"
+                    tools:layout_editor_absoluteY="30dp" />
+
+                <ImageView
+                    android:id="@+id/person_gotosetting"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginTop="12dp"
+                    android:src="@drawable/ic_outline_settings_24"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_person_profile"
+                    tools:ignore="MissingConstraints"
+                    tools:layout_editor_absoluteX="325dp" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/person_introducecontext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:text="个人简介内容"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="50dp"
+            android:background="#E5E5EA" />
+
+        <TextView
+            android:id="@+id/tv_mymoments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="我的图片"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="5dp"
+            android:layout_gravity="center"
+            android:background="@color/Hex" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_marginTop="10dp"
+            android:background="#E5E5EA" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/person_comments_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</FrameLayout>
