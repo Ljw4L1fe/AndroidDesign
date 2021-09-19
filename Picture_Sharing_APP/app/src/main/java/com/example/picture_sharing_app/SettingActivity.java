@@ -23,6 +23,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i=new Intent(SettingActivity.this,MainActivity.class);
+                i.putExtra("flagg",2);
                 startActivity(i);
             }
         });
@@ -30,7 +31,10 @@ public class SettingActivity extends AppCompatActivity {
         btExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent i = new Intent(SettingActivity.this, LoginActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
             }
         });
     }

@@ -51,6 +51,7 @@
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="25dp"
         android:inputType="text"
+        android:hint="8-11位纯数字"
         android:maxLines="1" />
 
     <TextView
@@ -74,6 +75,7 @@
         android:layout_marginStart="48dp"
         android:layout_marginEnd="48dp"
         android:inputType="textPassword"
+        android:hint="8-16位，只含英文大小写和数字"
         android:maxLines="1" />
 
     <TextView

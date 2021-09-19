@@ -19,10 +19,10 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ChangePwdActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
         <activity android:name=".SettingActivity" />
-        <activity android:name=".MainActivity"/>
-            <activity android:name=".MomentActivity" >
+        <activity android:name=".MainActivity" />
+        <activity android:name=".MomentActivity" />
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

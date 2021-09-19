@@ -2,6 +2,7 @@ package com.example.picture_sharing_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
+        int flag = getIntent().getIntExtra("flag", 0);
+        int flagg = getIntent().getIntExtra("flagg", 1);
+        if (flag == 2 || flagg == 2) {
+            navController.navigate(flag);
+        }
     }
 }

@@ -1,10 +1,13 @@
 package com.example.picture_sharing_app;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,9 +47,9 @@ public class PersonFragment extends Fragment {
         // Inflate the layout for this fragment
         context = getActivity();
         View view = inflater.inflate(R.layout.fragment_person, container, false);
-        btndesignprofile=view.findViewById(R.id.btn_person_profile);
+        btndesignprofile = view.findViewById(R.id.btn_person_profile);
         recyclerView = view.findViewById(R.id.person_comments_list);
-        ivsetting=view.findViewById(R.id.person_gotosetting);
+        ivsetting = view.findViewById(R.id.person_gotosetting);
         momentsAdapter = new MomentsAdapter(context, R.layout.list_item, commentsList);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(llm);
@@ -89,4 +92,5 @@ public class PersonFragment extends Fragment {
             commentsList.add(moments);
         }
     }
+
 }

@@ -77,4 +77,5 @@ public class MainFragment extends Fragment {
             commentsList.add(moments);
         }
     }
+
 }

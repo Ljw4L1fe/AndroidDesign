@@ -69,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ProfileActivity.this, MainActivity.class);
+                i.putExtra("flag",2);
                 startActivity(i);
             }
         });
