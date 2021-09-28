@@ -2,10 +2,15 @@ package com.example.picture_sharing_app;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavGraphNavigator;
 import androidx.navigation.Navigation;
+import androidx.navigation.NavigatorProvider;
+import androidx.navigation.fragment.FragmentNavigator;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,15 +18,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView navView;
+    private byte[] bytes = new byte[4096];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +60,5 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        int flag = getIntent().getIntExtra("flag", 0);
-        int flagg = getIntent().getIntExtra("flagg", 1);
-        if (flag == 2 || flagg == 2) {
-            navController.navigate(flag);
-        }
     }
 }

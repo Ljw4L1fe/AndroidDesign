@@ -23,7 +23,6 @@
                 android:id="@+id/add_image_view"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@mipmap/pic1"
                 app:layout_constraintLeft_toRightOf="@+id/add_image"
                 tools:ignore="MissingConstraints" />
 

@@ -1,9 +1,11 @@
 package com.example.picture_sharing_app;
 
+import android.graphics.Bitmap;
+
 public class Moments {
     private String mTime;
-    private String mUsername;
-    private int mImageId;
+    private String noteName;
+    private Bitmap mImage;
 
     public String getmTime() {
         return mTime;
@@ -14,18 +16,18 @@ public class Moments {
     }
 
     public String getmUsername() {
-        return mUsername;
+        return noteName;
     }
 
     public void setmUsername(String mUsername) {
-        this.mUsername = mUsername;
+        this.noteName = mUsername;
     }
 
-    public int getmImageId() {
-        return mImageId;
+    public Bitmap getmImageId() {
+        return mImage;
     }
 
-    public void setmImageId(int mImageId) {
-        this.mImageId = mImageId;
+    public void setmImageId(Bitmap mImageId) {
+        this.mImage = mImageId;
     }
 }

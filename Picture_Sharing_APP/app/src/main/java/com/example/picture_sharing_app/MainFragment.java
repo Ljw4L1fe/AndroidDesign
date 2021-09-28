@@ -7,12 +7,20 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Toast;
+
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +28,11 @@ import java.util.List;
 public class MainFragment extends Fragment {
     private String[] username = null;
     private String[] time = null;
-    private List<Moments> commentsList = new ArrayList<>();
+    private List<noter> data;//要设置的数据
     private MomentsAdapter momentsAdapter = null;
     private RecyclerView recyclerView;
     private Context context = null;
+    private SmartRefreshLayout refreshLayout;//刷新布局
 
     public MainFragment() {
         // Required empty public constructor
@@ -32,8 +41,11 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initData();
+        cacheInfo.finished = false;
+        flashView(0, 0);
     }
+
+    private static Handler handler = new Handler();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,40 +54,79 @@ public class MainFragment extends Fragment {
         context = getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         recyclerView = view.findViewById(R.id.comments_list);
-        momentsAdapter = new MomentsAdapter(context, R.layout.list_item, commentsList);
-        LinearLayoutManager llm = new LinearLayoutManager(context);
-        recyclerView.setLayoutManager(llm);
-        recyclerView.setAdapter(momentsAdapter);
-        //监听item点击事件
-        momentsAdapter.setOnItemClickListener(new MomentsAdapter.OnItemClickListener() {
+        refreshLayout = view.findViewById(R.id.refresh);
+        refreshData();
+        //下拉刷新
+        refreshLayout.setRefreshHeader(new ClassicsHeader(context));
+        //上拉加载
+        refreshLayout.setRefreshFooter(new ClassicsFooter(context));
+        //为下来刷新添加事件
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
-            public void OnItemClick(View v, Moments moments) {
-                Toast.makeText(getActivity(),"我是item", Toast.LENGTH_SHORT).show();
+            public void onRefresh(RefreshLayout refreshlayout) {
+                flashView(0, 0);
+                refreshData();
+                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
             }
         });
+        //为上拉下载添加事件
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+            }
+        });
+
+
         return view;
     }
 
+    private void flashView(int index, int option) {
+        cacheInfo.lengths = null;
+        cacheInfo.finished = false;
+        cacheInfo.notes = null;
+        Server.ThreadToServer(new flash(option), option);
+    }
 
-    private void initData() {
-        int length;
-        username = getResources().getStringArray(R.array.username);
-        time = getResources().getStringArray(R.array.time);
-        TypedArray images = getResources().obtainTypedArray(R.array.image);
-        TypedArray heads = getResources().obtainTypedArray(R.array.head);
-        if (username.length > time.length) {
-            length = time.length;
-        } else {
-            length = username.length;
-        }
-        for (int i = 0; i < length; i++) {
-            Moments moments = new Moments();
-            moments.setmUsername(username[i]);
-            moments.setmTime(time[i]);
-            moments.setmImageId(images.getResourceId(i, 0));
-            moments.setmImageId(heads.getResourceId(i, 0));
-            commentsList.add(moments);
-        }
+    private void refreshData() {
+        //这里写刷新数据的方法
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                int i = 10;
+                try {
+                    while (!cacheInfo.finished) {
+                        sleep(1000);
+                        i--;
+                        if (i == 0) break;
+                    }
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            momentsAdapter = new MomentsAdapter(context, R.layout.list_item, cacheInfo.notes);
+                            recyclerView.setAdapter(momentsAdapter);
+                            momentsAdapter.notifyDataSetChanged();
+                            //监听item点击事件
+                            momentsAdapter.setOnItemClickListener(new MomentsAdapter.OnItemClickListener() {
+                                @Override
+                                public void OnItemClick(View v, noter moments) {
+                                    Toast.makeText(getActivity(), "我是item", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    };
+                    handler.post(runnable);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+        LinearLayoutManager llm = new LinearLayoutManager(context);
+        recyclerView.setLayoutManager(llm);
     }
 
 }
+
