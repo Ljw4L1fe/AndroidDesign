@@ -22,7 +22,7 @@ public class ServerClass {
 
 }
 class Server{
-    public final static String host="10.34.119.9";
+    public final static String host="10.34.142.101";
     public final static int post=4040;
     public static void EndSend(OutputStream outputStream){
         try {
@@ -31,7 +31,7 @@ class Server{
             e.printStackTrace();
         }
     }
-    public static  <T> void ThreadToServer(T struct,int option){
+    public static  <T> void ThreadToServer(T struct,int mode){
         new Thread(){
             @Override
             public void run() {
@@ -62,11 +62,18 @@ class Server{
                             //JsonArray ja=jp.parse(new String(bytes)).getAsJsonArray();
                             //字节转字符串再转json
                             mainInfo = new Gson().fromJson(new String(bytes), mainInfo.class);
-                            cacheInfo.notes=mainInfo.notes;
-                            cacheInfo.lengths=mainInfo.lengths;
 
-                            System.out.println(mainInfo.lengths.size());
-                            System.out.println(mainInfo.notes.size());
+                            if(mode==0) {
+                                cacheInfo.notes = mainInfo.notes;
+                                cacheInfo.lengths = mainInfo.lengths;
+                                System.out.println(mainInfo.lengths.size());
+                                System.out.println(mainInfo.notes.size());
+                            }else if(mode==1){
+                                cacheInfo.moreNotes = mainInfo.notes;
+                                cacheInfo.moreLengths = mainInfo.lengths;
+                                System.out.println(mainInfo.lengths.size());
+                                System.out.println(mainInfo.notes.size());
+                            }
                             break;
                         }
                     }
@@ -107,21 +114,30 @@ class Server{
                                 System.out.println("all="+all+"  total="+total+"   getall="+getall);
                                 get+=count;
                                 if(finished){
-                                    if(i>=mainInfo.lengths.size()){
-                                        cacheInfo.notes.get(i%mainInfo.headlens.size()).headByte=imgbyte;
-                                    }else {
-                                        cacheInfo.notes.get(i).imageByte=imgbyte;
-                                        System.out.println("---------------------photo--finished");
+                                    if(mode==0) {
+                                        if (i >= mainInfo.lengths.size()) {
+                                            cacheInfo.notes.get(i % mainInfo.headlens.size()).headByte = imgbyte;
+                                        } else {
+                                            cacheInfo.notes.get(i).imageByte = imgbyte;
+                                            System.out.println("---------------------photo--finished");
+                                        }
+                                    }else if(mode==1){
+                                        if (i >= mainInfo.lengths.size()) {
+                                            cacheInfo.moreNotes.get(i % mainInfo.headlens.size()).headByte = imgbyte;
+                                        } else {
+                                            cacheInfo.moreNotes.get(i).imageByte = imgbyte;
+                                            System.out.println("---------------------photo--finished");
+                                        }
                                     }
                                     break;
                                 }
                             }
-
                         }
                     }
                     Server.EndSend(output);
                     System.out.println("over");
-                    cacheInfo.finished=true;
+                    if(mode==0)cacheInfo.finished=true;else if(mode==1) cacheInfo.moreFinished=true;
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -159,8 +175,8 @@ class Server{
                             output.write(bytes,0,bytes.length);
                             output.flush();
                             System.out.println("sendfinished bytes="+bytes.length);
-                           // output.write("{\"option\":10}".getBytes());
-                          //  output.flush();
+                            // output.write("{\"option\":10}".getBytes());
+                            //  output.flush();
                         }else { System.out.println("error:have not the string");}
                     }else {System.out.println("error:has tip"); }
                 } catch (IOException e) {
@@ -170,13 +186,50 @@ class Server{
             }
         }.start();
     };
+    public static void LikeAddOne(int noteId){
+        new Thread(){
+            Socket socket=null;
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    String json = "{\"option\":11,\"noteId\":"+noteId+"}";
+                    socket=new Socket(Server.host,Server.post);
+                    OutputStream output=socket.getOutputStream();//设置输出流
+                    output.write((json).getBytes("utf-8"));//输出
+                    output.flush();//清空
+                    BufferedInputStream input = new BufferedInputStream(socket.getInputStream());
+                    JsonObject jsonObject;
+                    int count;
+                    while (true){
+                        count=input.available();
+                        if(count>0){
+                            byte[] recive = new byte[count];
+                            input.read(recive,0,count);
+                            System.out.println(new String(recive));
+                            JsonParser jp = new JsonParser();
+                            jsonObject=jp.parse(new String(recive)).getAsJsonObject();
+                            break;
+                        }
+                    }
+                    if(jsonObject.has("tip")){
+
+                    }else {System.out.println("error:has tip"); }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+    };
+
 }
 
 class CheckUser{
     CheckUser(int account ,String password){
 
-    this.account=account;
-    this.password=password;
+        this.account=account;
+        this.password=password;
     }
     int option=1;
     int account;
@@ -214,11 +267,11 @@ class User{
 
 }
 
- class PersonInfo
+class PersonInfo
 {
     public byte[] buffer;
 
-//    public PersonInfo(byte[] buffer, PersonInfoAsString personInfoAsString)
+    //    public PersonInfo(byte[] buffer, PersonInfoAsString personInfoAsString)
 //    {
 //        this.buffer = buffer;
 //        this.personInfoAsString = personInfoAsString;
@@ -290,17 +343,20 @@ class noteList
 }
 class mainInfo
 {
- public  List<Integer> lengths=new ArrayList<Integer>();
- public  List<Integer> headlens=new ArrayList<Integer>();
- public  List<noter> notes = new ArrayList<noter>();
+    public  List<Integer> lengths=new ArrayList<Integer>();
+    public  List<Integer> headlens=new ArrayList<Integer>();
+    public  List<noter> notes = new ArrayList<noter>();
 
 }
 //-----------------------缓存在这里了
- class  cacheInfo{
+class  cacheInfo{
 
     public static List<Integer> lengths;
-    public static List<noter> notes=new ArrayList<>();
+    public static List<noter> notes;
     public static boolean finished=false;
+    public static List<Integer> moreLengths;
+    public static List<noter> moreNotes;
+    public static boolean moreFinished=false;
     //public static List<byte[]> images=new ArrayList<byte[]>();
 }
 class cacheInfo2{
@@ -308,7 +364,7 @@ class cacheInfo2{
     public static List<noter> notes;
     public static boolean finished=false;
 }
- class noter{
+class noter{
     public String subscription;
     public String author;
     public String noteName;
@@ -316,64 +372,37 @@ class cacheInfo2{
     public String time;
     public byte[] imageByte;
     public byte[] headByte;
+    public int likes;
+    public int id;
+    public String getSubscription() {
+        return subscription;
+    }
 
-     public String getSubscription() {
-         return subscription;
-     }
+    public String getAuthor() {
+        return author;
+    }
 
-     public String getAuthor() {
-         return author;
-     }
+    public String getNoteName() {
+        return noteName;
+    }
 
-     public String getNoteName() {
-         return noteName;
-     }
+    public String getSpace() {
+        return space;
+    }
 
-     public String getSpace() {
-         return space;
-     }
+    public String getTime() {
+        return time;
+    }
 
-     public String getTime() {
-         return time;
-     }
+    public byte[] getImageByte() {
+        return imageByte;
+    }
 
-     public byte[] getImageByte() {
-         return imageByte;
-     }
-
-     public byte[] getHeadByte() {
-         return headByte;
-     }
-
-     public void setSubscription(String subscription) {
-         this.subscription = subscription;
-     }
-
-     public void setAuthor(String author) {
-         this.author = author;
-     }
-
-     public void setNoteName(String noteName) {
-         this.noteName = noteName;
-     }
-
-     public void setSpace(String space) {
-         this.space = space;
-     }
-
-     public void setTime(String time) {
-         this.time = time;
-     }
-
-     public void setImageByte(byte[] imageByte) {
-         this.imageByte = imageByte;
-     }
-
-     public void setHeadByte(byte[] headByte) {
-         this.headByte = headByte;
-     }
- }
- class addInfo{
+    public byte[] getHeadByte() {
+        return headByte;
+    }
+}
+class addInfo{
     public String title;
     public String subscription;
     public int length;
@@ -385,7 +414,7 @@ class cacheInfo2{
         this.title=title;
         this.subscription=subscription;
     }
- }
+}
 class  PhotoSystem{
     static byte[] getImageByte(Uri uri, Context context)
     {

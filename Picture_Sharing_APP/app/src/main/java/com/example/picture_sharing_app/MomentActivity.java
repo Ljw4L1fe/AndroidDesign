@@ -5,21 +5,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Random;
 
 public class MomentActivity extends AppCompatActivity {
@@ -27,18 +20,37 @@ public class MomentActivity extends AppCompatActivity {
     private ImageView ivdownload;
     private ImageView ivshare;
     private ImageView ivimage;
-    private String description;
+    private TextView title;
+    private TextView description;
+    private ImageView authorImg;
+    private TextView authorName;
+    private TextView likeCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moment);
+        Intent i=getIntent();
+        int pos=i.getIntExtra("pos",-1);
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.moment_toolbar);
         setSupportActionBar(myToolbar);
         ivimage = findViewById(R.id.moment_image);
         ivlike = findViewById(R.id.moment_like);
         ivdownload = findViewById(R.id.moment_download);
         ivshare = findViewById(R.id.moment_share);
+        title = findViewById(R.id.moment_title);
+        description = findViewById(R.id.moment_context);
+        authorImg = findViewById(R.id.moment_head);
+        authorName = findViewById(R.id.moment_username);
+        likeCount = findViewById(R.id.moment_likecount);
+        //赋值
+        ivimage.setImageBitmap(BitmapFactory.decodeByteArray(cacheInfo.notes.get(pos).imageByte, 0, cacheInfo.notes.get(pos).imageByte.length));
+        title.setText(cacheInfo.notes.get(pos).noteName);
+        description.setText(cacheInfo.notes.get(pos).subscription);
+        authorImg.setImageBitmap(BitmapFactory.decodeByteArray(cacheInfo.notes.get(pos).headByte, 0, cacheInfo.notes.get(pos).headByte.length));
+        authorName.setText(cacheInfo.notes.get(pos).author);
+        likeCount.setText(cacheInfo.notes.get(pos).likes +"");
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
             public void onClick(View v) {
@@ -50,14 +62,16 @@ public class MomentActivity extends AppCompatActivity {
         ivlike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+               Server.LikeAddOne(cacheInfo.notes.get(pos).id);
+               likeCount.setText((Integer.parseInt(likeCount.getText().toString())+1)+"");
             }
         });
         //下载点击事件
         ivdownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveImage(ivimage);
+                saveImage(ivimage,pos);
+                Toast.makeText(MomentActivity.this, "下载成功！", Toast.LENGTH_SHORT).show();
             }
         });
         //分享点击事件
@@ -69,13 +83,11 @@ public class MomentActivity extends AppCompatActivity {
         });
     }
 
-    private void saveImage(ImageView imageView) {
-        imageView.setDrawingCacheEnabled(true);//开启catch，开启之后才能获取ImageView中的bitmap
+    private void saveImage(ImageView imageView,int pos) {
+        imageView.setDrawingCacheEnabled(true);//设置完才能获取bitmap图片
         Bitmap bitmap = imageView.getDrawingCache();//获取imageview中的图像
-        Random rand1=new Random();
-        int rand=rand1.nextInt();
-        String title=String.valueOf(rand);
-        MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, title,description);
+        String titlee=title.getText().toString();
+        MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, titlee,cacheInfo.notes.get(pos).subscription);
         imageView.setDrawingCacheEnabled(false);//关闭catch
     }
 }
