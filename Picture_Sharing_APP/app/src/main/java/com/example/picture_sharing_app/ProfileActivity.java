@@ -74,8 +74,10 @@ public class ProfileActivity extends AppCompatActivity {
         String gender=User.userInfo.get("sex").getAsString();
         if(gender.equals("男")){
             rbmale.setChecked(true);
+            sex="男";
         }else {
             rbfemale.setChecked(true);
+            sex="女";
         }
         //性别另寻高就。
         et_subscription.setText(User.userInfo.get("subscription").getAsString());//密码

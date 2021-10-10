@@ -28,14 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainFragment extends Fragment {
-    private String[] username = null;
-    private String[] time = null;
-    private List<noter> data ;//要设置的数据
     private MomentsAdapter momentsAdapter = null;
     private RecyclerView recyclerView;
     private Context context = null;
     private SmartRefreshLayout refreshLayout ;//刷新布局
-    private boolean loadMore=true;
     private static int index=0;
     public MainFragment() {
         // Required empty public constructor
@@ -59,6 +55,7 @@ public class MainFragment extends Fragment {
         refreshLayout = view.findViewById(R.id.refresh);
         LinearLayoutManager llm = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(llm);
+        System.out.println("fresh one time");
         if(!cacheInfo.finished) {
             flashView(index);
         }else {
@@ -75,7 +72,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 //momentsAdapter=null;
-                Server.ThreadToServer(new flash(0),1);
+                Server.ThreadToServer(new flash(0,true,-1),1);
                 new Thread(){
                     @Override
                     public void run() {
@@ -96,7 +93,7 @@ public class MainFragment extends Fragment {
                             Runnable runnable=new Runnable() {
                                 @Override
                                 public void run() {
-                                    momentsAdapter.flash();
+                                    momentsAdapter.flash(true);
                                     refreshlayout.finishRefresh(0/*,false*/);//传入false表示刷新失败
                                 }
                             };
@@ -112,7 +109,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
                 index+=5;
-                Server.ThreadToServer(new flash(index),1);
+                Server.ThreadToServer(new flash(index,true,-1),1);
                 new Thread(){
                     @Override
                     public void run() {
@@ -150,7 +147,7 @@ public class MainFragment extends Fragment {
     }
 
     private void flashView(int index) {
-        Server.ThreadToServer(new flash(index),0);
+        Server.ThreadToServer(new flash(index,true,-1),0);
         refreshData();
     }
 
@@ -178,8 +175,10 @@ public class MainFragment extends Fragment {
 
                                 @Override
                                 public void OnItemClick(View v, int pos) {
+                                    Toast.makeText(getActivity(),pos+"", Toast.LENGTH_SHORT).show();//获取item的用户名数据
                                     Intent i = new Intent(context,MomentActivity.class);
                                     i.putExtra("pos",pos);
+                                    i.putExtra("mode",true);
                                     startActivity(i);
                                 }
                             });

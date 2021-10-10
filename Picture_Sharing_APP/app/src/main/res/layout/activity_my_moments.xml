@@ -1,18 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="UTF-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+android:orientation="vertical"
     tools:context=".MyMomentsActivity">
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/mymoments_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@color/toolbar_background"
         android:theme="@style/ToolbarMenuTheme"
+        app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_outline_arrow_back_ios_24"
         app:title=" "
         tools:ignore="MissingConstraints">
@@ -28,12 +31,30 @@
             android:textSize="20sp" />
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/my_comments_list"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/mymoments_refresh"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mymoments_toolbar"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toBottomOf="@+id/mymoments_toolbar">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/my_comments_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/mymoments_toolbar"
+            tools:ignore="MissingConstraints" />
+
+        <com.scwang.smartrefresh.layout.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srlClassicsSpinnerStyle="Translate" />
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+</LinearLayout>

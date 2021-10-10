@@ -22,7 +22,7 @@ public class ServerClass {
 
 }
 class Server{
-    public final static String host="10.34.142.101";
+    public final static String host="10.33.40.48";
     public final static int post=4040;
     public static void EndSend(OutputStream outputStream){
         try {
@@ -40,6 +40,7 @@ class Server{
                 T t=struct;
                 Gson gson=new Gson();
                 String json= gson.toJson(t);
+
                 try {
                     socket=new Socket(Server.host,Server.post);
                     OutputStream output=socket.getOutputStream();//设置输出流
@@ -73,6 +74,12 @@ class Server{
                                 cacheInfo.moreLengths = mainInfo.lengths;
                                 System.out.println(mainInfo.lengths.size());
                                 System.out.println(mainInfo.notes.size());
+                            }else if(mode==2){
+                                myCacheInfo.notes=mainInfo.notes;
+                                myCacheInfo.lengths=mainInfo.lengths;
+                            }else if(mode==3){
+                                myCacheInfo.moreNotes=mainInfo.notes;
+                                myCacheInfo.moreLengths=mainInfo.lengths;
                             }
                             break;
                         }
@@ -108,12 +115,10 @@ class Server{
                                 if(total==(get+len)){
                                     finished=true;
                                 }
-                                System.out.println("len="+len);
-                                System.out.println("coun="+count);
-                                System.out.println("get="+get);
                                 System.out.println("all="+all+"  total="+total+"   getall="+getall);
                                 get+=count;
                                 if(finished){
+                                    System.out.println("this mode = " + mode);
                                     if(mode==0) {
                                         if (i >= mainInfo.lengths.size()) {
                                             cacheInfo.notes.get(i % mainInfo.headlens.size()).headByte = imgbyte;
@@ -128,6 +133,20 @@ class Server{
                                             cacheInfo.moreNotes.get(i).imageByte = imgbyte;
                                             System.out.println("---------------------photo--finished");
                                         }
+                                    }else if (mode==2){
+                                        if (i >= mainInfo.lengths.size()) {
+                                            myCacheInfo.notes.get(i % mainInfo.headlens.size()).headByte = imgbyte;
+                                        } else {
+                                            myCacheInfo.notes.get(i).imageByte = imgbyte;
+                                            System.out.println("---------------------photo--finished");
+                                        }
+                                    }else if(mode==3){
+                                        if (i >= mainInfo.lengths.size()) {
+                                            myCacheInfo.moreNotes.get(i % mainInfo.headlens.size()).headByte = imgbyte;
+                                        } else {
+                                            myCacheInfo.moreNotes.get(i).imageByte = imgbyte;
+                                            System.out.println("---------------------photo--finished");
+                                        }
                                     }
                                     break;
                                 }
@@ -136,7 +155,10 @@ class Server{
                     }
                     Server.EndSend(output);
                     System.out.println("over");
-                    if(mode==0)cacheInfo.finished=true;else if(mode==1) cacheInfo.moreFinished=true;
+                    if(mode==0)cacheInfo.finished=true;
+                    else if(mode==1) cacheInfo.moreFinished=true;
+                    else if(mode==2) myCacheInfo.finished=true;
+                    else if(mode==3) myCacheInfo.moreFinished=true;
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -175,10 +197,10 @@ class Server{
                             output.write(bytes,0,bytes.length);
                             output.flush();
                             System.out.println("sendfinished bytes="+bytes.length);
-                            // output.write("{\"option\":10}".getBytes());
-                            //  output.flush();
+
                         }else { System.out.println("error:have not the string");}
                     }else {System.out.println("error:has tip"); }
+                    EndSend(output);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -215,6 +237,7 @@ class Server{
                     if(jsonObject.has("tip")){
 
                     }else {System.out.println("error:has tip"); }
+                    EndSend(output);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -223,6 +246,84 @@ class Server{
         }.start();
     };
 
+    public static void GetLikes(int noteId){
+        new Thread(){
+            Socket socket=null;
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    String json = "{\"option\":12,\"noteId\":"+noteId+"}";
+                    socket=new Socket(Server.host,Server.post);
+                    OutputStream output=socket.getOutputStream();//设置输出流
+                    output.write((json).getBytes("utf-8"));//输出
+                    output.flush();//清空
+                    BufferedInputStream input = new BufferedInputStream(socket.getInputStream());
+                    JsonObject jsonObject;
+                    int count;
+                    while (true){
+                        count=input.available();
+                        if(count>0){
+                            byte[] recive = new byte[count];
+                            input.read(recive,0,count);
+                            System.out.println(new String(recive));
+                            JsonParser jp = new JsonParser();
+                            jsonObject=jp.parse(new String(recive)).getAsJsonObject();
+                            break;
+                        }
+                    }
+                    if(jsonObject.has("likes")){
+                        currentNote.likes=jsonObject.get("likes").getAsInt();
+                        System.out.println("this note likes:"+currentNote.likes);
+                        //socket.
+                    }else {System.out.println("error:null likes"); }
+                    EndSend(output);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+    };
+
+    public static void DeleteNote(int noteId){
+        new Thread(){
+            Socket socket=null;
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    String json = "{\"option\":13,\"noteId\":"+noteId+"}";
+                    socket=new Socket(Server.host,Server.post);
+                    OutputStream output=socket.getOutputStream();//设置输出流
+                    output.write((json).getBytes("utf-8"));//输出
+                    output.flush();//清空
+                    BufferedInputStream input = new BufferedInputStream(socket.getInputStream());
+                    JsonObject jsonObject;
+                    int count;
+                    while (true){
+                        count=input.available();
+                        if(count>0){
+                            byte[] recive = new byte[count];
+                            input.read(recive,0,count);
+                            System.out.println(new String(recive));
+                            JsonParser jp = new JsonParser();
+                            jsonObject=jp.parse(new String(recive)).getAsJsonObject();
+                            break;
+                        }
+                    }
+                    if(jsonObject.has("tip")){
+                        System.out.println("this note tip:"+jsonObject.get("tip").getAsString());
+                        //socket.
+                    }else {System.out.println("error:null tip"); }
+                    EndSend(output);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }.start();
+    };
 }
 
 class CheckUser{
@@ -258,13 +359,21 @@ class Register{
         this.password=password;
     }
 }
-
+class currentNote{
+    public static int likes=0;
+}
 class User{
+    public static int uid;
     public static JsonObject userInfo;
     public static int account;
     public static String password;
     public static Bitmap headBitmap;
+    public static boolean flash=false;
 
+}
+
+class accountt{
+    public static int accountt=0;
 }
 
 class PersonInfo
@@ -324,8 +433,12 @@ class  flash
 {
     private int option=6;
     private int index=0;
-    flash(int index){
+    private boolean type=true;
+    private int uid =-1;
+    flash(int index,boolean type,int uid){
         this.index=index;
+        this.type=type;
+        this.uid =uid;
     }
 }
 
@@ -359,11 +472,16 @@ class  cacheInfo{
     public static boolean moreFinished=false;
     //public static List<byte[]> images=new ArrayList<byte[]>();
 }
-class cacheInfo2{
+
+class myCacheInfo{
     public static List<Integer> lengths;
     public static List<noter> notes;
     public static boolean finished=false;
+    public static List<Integer> moreLengths;
+    public static List<noter> moreNotes;
+    public static boolean moreFinished=false;
 }
+
 class noter{
     public String subscription;
     public String author;
@@ -372,7 +490,6 @@ class noter{
     public String time;
     public byte[] imageByte;
     public byte[] headByte;
-    public int likes;
     public int id;
     public String getSubscription() {
         return subscription;
@@ -402,6 +519,8 @@ class noter{
         return headByte;
     }
 }
+
+
 class addInfo{
     public String title;
     public String subscription;

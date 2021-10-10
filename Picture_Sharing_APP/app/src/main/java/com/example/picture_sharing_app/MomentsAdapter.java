@@ -16,8 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MomentsAdapter extends RecyclerView.Adapter<MomentsAdapter.ViewHolder> {
+public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static List<noter> notes;
+    private static final String TAG = "EmptyAdapter";
+    public static final int VIEW_TYPE_ITEM = 1;
+    public static final int VIEW_TYPE_EMPTY = 0;
     private Context mContext;
     private int resourceId;
 
@@ -27,39 +30,59 @@ public class MomentsAdapter extends RecyclerView.Adapter<MomentsAdapter.ViewHold
         this.resourceId = resourceId;
     }
 
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(resourceId, parent, false);
-        ViewHolder holder = new ViewHolder(view);
-        return holder;
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_EMPTY) {
+            View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty_layout, parent, false);
+            return new RecyclerView.ViewHolder(emptyView){};
+        } else {
+            View view = LayoutInflater.from(parent.getContext()).inflate(resourceId, parent, false);
+            MyViewHolder holder = new MyViewHolder(view);
+            return holder;
+        }
     }
 
     //绑定数据
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        noter not = notes.get(position);
-        String[] time=not.space.split("_");
-        holder.tvTime.setText(time[0]+"/"+time[1]+"/"+time[2]);
-        Bitmap headBit = BitmapFactory.decodeByteArray(not.headByte, 0, not.headByte.length);
-        holder.ivHead.setImageBitmap(headBit);
-        holder.tvUsername.setText(not.author);
-        Bitmap bit = BitmapFactory.decodeByteArray(not.imageByte, 0, not.imageByte.length);
-        holder.ivImage.setImageBitmap(bit);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof MyViewHolder) {
+            MyViewHolder vh=(MyViewHolder)holder;
+            noter not = notes.get(position);
+            String[] time = not.space.split("_");
+            vh.tvTime.setText(time[0] + "/" + time[1] + "/" + time[2]);
+            Bitmap headBit = BitmapFactory.decodeByteArray(not.headByte, 0, not.headByte.length);
+            vh.ivHead.setImageBitmap(headBit);
+            vh.tvUsername.setText(not.author);
+            Bitmap bit = BitmapFactory.decodeByteArray(not.imageByte, 0, not.imageByte.length);
+            vh.ivImage.setImageBitmap(bit);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return notes.size();
+        if (notes.size() == 0) {
+            return 1;
+        } else {
+            return notes.size();
+        }
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        //在这里进行判断，如果我们的集合的长度为0时，我们就使用emptyView的布局
+        if (notes.size() == 0) {
+            return VIEW_TYPE_EMPTY;
+        }
+        //如果有数据，则使用ITEM的布局
+        return VIEW_TYPE_ITEM;
+    }
 
-
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvUsername;
         TextView tvTime;
         ImageView ivImage;
         ImageView ivHead;
 
-        public ViewHolder(View view) {
+        public MyViewHolder(View view) {
             super(view);
             tvUsername = view.findViewById(R.id.main_username);
             tvTime = view.findViewById(R.id.main_time);
@@ -72,13 +95,12 @@ public class MomentsAdapter extends RecyclerView.Adapter<MomentsAdapter.ViewHold
                     //Toast.makeText(context,"点击了xxx",Toast.LENGTH_SHORT).show();
                     //此处回传点击监听事件
                     if (onItemClickListener != null) {
-                        int i=getLayoutPosition();
+                        int i = getLayoutPosition();
                         onItemClickListener.OnItemClick(v, i);
 
                     }
                 }
             });
-
         }
     }
 
@@ -98,15 +120,24 @@ public class MomentsAdapter extends RecyclerView.Adapter<MomentsAdapter.ViewHold
     public void add(List<noter> note) {
         //增加数据
         int position = notes.size();
-        System.out.println("position:"+position );
+        System.out.println("position:" + position);
         notes.addAll(position, note);
         notifyItemInserted(position);
 
     }
-    public void flash(){
-        notes=cacheInfo.moreNotes;
+
+    public void flash(boolean mode) {
+        System.out.println("flash mode:" + mode);
+        if (mode) {
+            notes = cacheInfo.moreNotes;
+            cacheInfo.notes = cacheInfo.moreNotes;
+        } else {
+            notes = myCacheInfo.moreNotes;
+            myCacheInfo.notes = cacheInfo.moreNotes;
+        }
+
         int position = notes.size();
-        System.out.println("position:"+position );
+        System.out.println("position:" + position);
         notifyDataSetChanged();
     }
 

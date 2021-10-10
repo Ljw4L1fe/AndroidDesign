@@ -1,8 +1,10 @@
 package com.example.picture_sharing_app;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
@@ -26,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText etnewPwd;
     private EditText etnewAccount;
     private EditText etconnewPwd;
+    private int account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.register_toolbar);
         setSupportActionBar(myToolbar);
         etconnewPwd = findViewById(R.id.et_connewpwd);
-        etnewPwd = findViewById(R.id.et_pwd);
+        etnewPwd = findViewById(R.id.et_newpwd);
         etnewAccount = findViewById(R.id.et_newaccount);//实质上是用户名
         Button btChange = findViewById(R.id.bt_changepwd);
         Button btRegister = findViewById(R.id.bt_register);
@@ -48,16 +51,10 @@ public class RegisterActivity extends AppCompatActivity {
         btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String check1 = "[0-9]{8,11}";//判断用户名规范正则表达式
                 String check2 = "[a-z0-9A-Z]{8,16}";//判断密码规范正则表达式
-                Pattern regex1 = Pattern.compile(check1);
                 Pattern regex2 = Pattern.compile(check2);
-                Matcher matcher1 = regex1.matcher(etnewAccount.getText());
                 Matcher matcher2 = regex2.matcher(etnewPwd.getText());
-                boolean isMatched1 = matcher1.matches();//用户名规范为true 不规范为false
                 boolean isMatched2 = matcher2.matches();//密码规范为true 不规范为false
-                //判断用户名格式是否正确
-                if (isMatched1) {
                     //判断密码格式是否正确
                     if (isMatched2) {
                         //判断两次输入的密码是否一致
@@ -71,11 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
                         clear();
                         Toast.makeText(RegisterActivity.this, "密码格式错误！", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    clear();
-                    Toast.makeText(RegisterActivity.this, "用户名格式错误！", Toast.LENGTH_SHORT).show();
-                }
-                //再写一个判断账号是否已存在
             }
         });
 
@@ -107,6 +99,7 @@ public class RegisterActivity extends AppCompatActivity {
                             JsonParser jp = new JsonParser();//json解析器
                             jsonObject = jp.parse(new String(bytes)).getAsJsonObject();//字节转字符串再转json
                             System.out.println(jsonObject.get("tip").getAsString());
+                            account=jsonObject.get("tip").getAsInt();
                             input.close();
                             output.close();
                             socket.close();
@@ -115,7 +108,16 @@ public class RegisterActivity extends AppCompatActivity {
                     }
                     Server.EndSend(output);
                     Looper.prepare();
-                    Toast.makeText(RegisterActivity.this, jsonObject.get("tip").getAsString(), Toast.LENGTH_SHORT).show();
+                    new AlertDialog.Builder(RegisterActivity.this).setTitle("提示")//设置对话框标题
+                            .setMessage("你的账号为:"+account)
+                            .setPositiveButton("确认", new DialogInterface.OnClickListener() {//添加确定按钮
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+                                    Intent i = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    accountt.accountt=account;
+                                    startActivity(i);
+                                }
+                            }).show();//在按键响应事件中显示此对话框
                     Looper.loop();
                 } catch (IOException e) {
                     e.printStackTrace();
