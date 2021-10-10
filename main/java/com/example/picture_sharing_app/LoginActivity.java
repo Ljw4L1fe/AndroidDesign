@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.renderscript.Sampler;
 import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 
 import org.json.JSONObject;
@@ -36,9 +38,14 @@ import java.io.InputStreamReader;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
 public class LoginActivity extends AppCompatActivity {
@@ -47,21 +54,34 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etAccount;//账号行
     private String host;//服务器地址
     private int post;//端口号
+   // List<Integer> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        list.add(6);
+//        list.add(7);
+//        list.add(8);
+//        Gson gson = new Gson();
+//        System.out.println(list);
+//        System.out.println(gson.toJson(list));
+//
+//        List<Integer> tList = gson.fromJson(gson.toJson(list), new TypeToken<List<Integer>>(){}.getType());
+//        System.out.println(tList);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.login_toolbar);//登录顶端条
         setSupportActionBar(myToolbar);
         final ImageView ivPwdSwitch = findViewById(R.id.iv_pwd_switch);//密码是否可见图片
         etPwd = findViewById(R.id.et_pwd);
         etAccount = findViewById(R.id.et_account);
         Button btLogin = findViewById(R.id.bt_login);
-        host = getResources().getString(R.string.host);
+        host = Server.host;
         post = getResources().getInteger(R.integer.post);
-
-
+        System.out.println(accountt.accountt);
+        if(accountt.accountt!=0){
+            etAccount.setText(String.valueOf(accountt.accountt));
+            accountt.accountt=0;
+        }
         ivPwdSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +111,22 @@ public class LoginActivity extends AppCompatActivity {
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ConnectToServer();
+                String check1 = "[0-9]{7,11}";//判断用户名规范正则表达式
+                Pattern regex1 = Pattern.compile(check1);
+                Matcher matcher1 = regex1.matcher(etAccount.getText());
+                boolean isMatched1 = matcher1.matches();//用户名规范为true 不规范为false
+                if(isMatched1){
+                    if(!etPwd.getText().toString().isEmpty()){
+                        ConnectToServer();
+                    }else{
+                        clear();
+                        Toast.makeText(LoginActivity.this, "密码不能为空！", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    clear();
+                    Toast.makeText(LoginActivity.this, "账号格式错误！", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });//登录事件
     }
@@ -100,8 +135,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run(){
                 super.run();
-
-
                 if(etAccount.getText().toString().isEmpty() || etPwd.getText().toString().isEmpty()){
                     return;
                 }
@@ -192,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                 }
                                 if(imageGet==0){
+                                    //Server.EndSend(output);
                                     System.out.println("finish");
                                     input.close();//三连关
                                     output.close();
@@ -251,10 +285,14 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.login_toolbar_menu, menu);
         return true;
+    }
+
+    private void clear() {
+        etAccount.setText(null);
+        etPwd.setText(null);
     }
 
 }
