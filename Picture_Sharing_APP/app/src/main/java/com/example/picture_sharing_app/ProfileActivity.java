@@ -49,8 +49,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btn_save;
     private RadioButton rbmale;
     private RadioButton rbfemale;
-    private boolean changePhoto=false;
-    private byte[] imgbytes=null;
+    private boolean changePhoto = false;
+    private byte[] imgbytes = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,8 @@ public class ProfileActivity extends AppCompatActivity {
         iv_photo = findViewById(R.id.profile_image);//头像图片
         btn_save = findViewById(R.id.bt_save);
         //匹配
-        rbmale=findViewById(R.id.radioButton_male);
-        rbfemale=findViewById(R.id.radioButton_female);
+        rbmale = findViewById(R.id.radioButton_male);
+        rbfemale = findViewById(R.id.radioButton_female);
         ivselectimg = findViewById(R.id.iv_selectimg);
         radiogroup_gender = findViewById(R.id.radioGroup_gender);
         tvchangepwd = findViewById(R.id.tv_changepwd);
@@ -71,17 +71,15 @@ public class ProfileActivity extends AppCompatActivity {
         //赋值
         iv_photo.setImageBitmap(User.headBitmap);//头像
         et_name.setText(User.userInfo.get("name").getAsString());//用户名
-        String gender=User.userInfo.get("sex").getAsString();
-        if(gender.equals("男")){
+        String gender = User.userInfo.get("sex").getAsString();
+        if (gender.equals("男")) {
             rbmale.setChecked(true);
-            sex="男";
-        }else {
+            sex = "男";
+        } else {
             rbfemale.setChecked(true);
-            sex="女";
+            sex = "女";
         }
-        //性别另寻高就。
         et_subscription.setText(User.userInfo.get("subscription").getAsString());//密码
-
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,26 +107,24 @@ public class ProfileActivity extends AppCompatActivity {
                 showBottomDialog();
             }
         });
-
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-
-
     }
 
     private void updateSave() {
         new Thread() {
             Socket socket = null;
-            UpdateInfo updateInfo = new UpdateInfo(User.account, et_name.getText().toString(), sex, et_subscription.getText().toString(),User.userInfo.get("uid").getAsInt());
+            UpdateInfo updateInfo = new UpdateInfo(User.account, et_name.getText().toString(), sex, et_subscription.getText().toString(), User.userInfo.get("uid").getAsInt());
+
             @Override
             public void run() {
                 super.run();
-                if(changePhoto) {
-                    updateInfo.headLength=imgbytes.length;
+                if (changePhoto) {
+                    updateInfo.headLength = imgbytes.length;
                 }
                 Gson gson = new Gson();
                 String json = gson.toJson(updateInfo);
@@ -137,7 +133,6 @@ public class ProfileActivity extends AppCompatActivity {
                     OutputStream output = socket.getOutputStream();//设置输出流
                     output.write((json).getBytes("utf-8"));//输出
                     output.flush();//清空
-                    System.out.println("profile" + new String(json));
                     BufferedInputStream input = new BufferedInputStream(socket.getInputStream());
                     int count = 0;
                     JsonObject jsonObject;
@@ -148,9 +143,9 @@ public class ProfileActivity extends AppCompatActivity {
                             byte[] bytes = new byte[count];
                             input.read(bytes);
                             jsonObject = jp.parse(new String(bytes)).getAsJsonObject();//字节转字符串再转json
-                            if(changePhoto){
-                                changePhoto=false;
-                                if(jsonObject.get("tip").getAsString().equals("可以传图片")) {
+                            if (changePhoto) {
+                                changePhoto = false;
+                                if (jsonObject.get("tip").getAsString().equals("可以传图片")) {
                                     output.write(imgbytes);
                                     output.flush();
                                     while (true) {
@@ -160,11 +155,10 @@ public class ProfileActivity extends AppCompatActivity {
                                             input.read(bytes);
                                             jsonObject = jp.parse(new String(bytes)).getAsJsonObject();//字节转字符串再转json
                                             System.out.println(jsonObject.get("tip").getAsString());
-
                                         }
                                     }
                                 }
-                            }else {
+                            } else {
                                 System.out.println(jsonObject.get("tip").getAsString());
                             }
                             Server.EndSend(output);
@@ -174,9 +168,6 @@ public class ProfileActivity extends AppCompatActivity {
                             break;
                         }
                     }
-
-
-
                     Looper.prepare();
                     Toast.makeText(ProfileActivity.this, jsonObject.get("tip").getAsString(), Toast.LENGTH_SHORT).show();
                     Looper.loop();
@@ -208,7 +199,6 @@ public class ProfileActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
         dialog.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,9 +221,9 @@ public class ProfileActivity extends AppCompatActivity {
         //在相册里面选择好相片之后调回到现在的这个activity中
         Uri selectedImage = data.getData(); //获取系统返回的照片的Uri
         iv_photo.setImageURI(selectedImage);
-        imgbytes=PhotoSystem.getImageByte(selectedImage,ProfileActivity.this);
-        System.out.println("选择完成！：img="+imgbytes.length);
-        changePhoto=true;
+        imgbytes = PhotoSystem.getImageByte(selectedImage, ProfileActivity.this);
+        System.out.println("选择完成！：img=" + imgbytes.length);
+        changePhoto = true;
     }
 
     public void onRadioButtonClicked(View view) {

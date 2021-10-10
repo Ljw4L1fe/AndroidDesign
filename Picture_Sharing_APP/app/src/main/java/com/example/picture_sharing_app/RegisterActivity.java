@@ -39,7 +39,6 @@ public class RegisterActivity extends AppCompatActivity {
         etconnewPwd = findViewById(R.id.et_connewpwd);
         etnewPwd = findViewById(R.id.et_newpwd);
         etnewAccount = findViewById(R.id.et_newaccount);//实质上是用户名
-        Button btChange = findViewById(R.id.bt_changepwd);
         Button btRegister = findViewById(R.id.bt_register);
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
@@ -55,19 +54,19 @@ public class RegisterActivity extends AppCompatActivity {
                 Pattern regex2 = Pattern.compile(check2);
                 Matcher matcher2 = regex2.matcher(etnewPwd.getText());
                 boolean isMatched2 = matcher2.matches();//密码规范为true 不规范为false
-                    //判断密码格式是否正确
-                    if (isMatched2) {
-                        //判断两次输入的密码是否一致
-                        if (etnewPwd.getText().toString().equals(etconnewPwd.getText().toString())) {
-                            Register();
-                        } else {
-                            clear();
-                            Toast.makeText(RegisterActivity.this, "两次输入密码不一致！", Toast.LENGTH_SHORT).show();
-                        }
+                //判断密码格式是否正确
+                if (isMatched2) {
+                    //判断两次输入的密码是否一致
+                    if (etnewPwd.getText().toString().equals(etconnewPwd.getText().toString())) {
+                        Register();
                     } else {
                         clear();
-                        Toast.makeText(RegisterActivity.this, "密码格式错误！", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "两次输入密码不一致！", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    clear();
+                    Toast.makeText(RegisterActivity.this, "密码格式错误！", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -98,8 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
                             input.read(bytes);
                             JsonParser jp = new JsonParser();//json解析器
                             jsonObject = jp.parse(new String(bytes)).getAsJsonObject();//字节转字符串再转json
-                            System.out.println(jsonObject.get("tip").getAsString());
-                            account=jsonObject.get("tip").getAsInt();
+                            account = jsonObject.get("tip").getAsInt();
                             input.close();
                             output.close();
                             socket.close();
@@ -109,12 +107,12 @@ public class RegisterActivity extends AppCompatActivity {
                     Server.EndSend(output);
                     Looper.prepare();
                     new AlertDialog.Builder(RegisterActivity.this).setTitle("提示")//设置对话框标题
-                            .setMessage("你的账号为:"+account)
+                            .setMessage("你的账号为:" + account)
                             .setPositiveButton("确认", new DialogInterface.OnClickListener() {//添加确定按钮
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
                                     Intent i = new Intent(RegisterActivity.this, LoginActivity.class);
-                                    accountt.accountt=account;
+                                    accountt.accountt = account;
                                     startActivity(i);
                                 }
                             }).show();//在按键响应事件中显示此对话框

@@ -81,10 +81,7 @@ public class ChangePwdActivity extends AppCompatActivity {
                                                 byte[] bytes = new byte[count];
                                                 input.read(bytes);
                                                 JsonParser jp = new JsonParser();//json解析器
-
                                                 jsonObject = jp.parse(new String(bytes)).getAsJsonObject();//字节转字符串再转json
-                                                System.out.println(jsonObject.get("tip").getAsString());
-
                                                 break;
                                             }
                                         }
@@ -92,8 +89,6 @@ public class ChangePwdActivity extends AppCompatActivity {
                                         Looper.prepare();
                                         Toast.makeText(ChangePwdActivity.this, jsonObject.get("tip").getAsString(), Toast.LENGTH_SHORT).show();
                                         Looper.loop();
-
-
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
@@ -111,8 +106,6 @@ public class ChangePwdActivity extends AppCompatActivity {
                     clear();
                     Toast.makeText(ChangePwdActivity.this, "输入不能为空！", Toast.LENGTH_SHORT).show();
                 }
-                //还得再写个判断原密码是否正确
-
             }
         });
 

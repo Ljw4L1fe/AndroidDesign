@@ -33,7 +33,8 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_EMPTY) {
             View emptyView = LayoutInflater.from(parent.getContext()).inflate(R.layout.empty_layout, parent, false);
-            return new RecyclerView.ViewHolder(emptyView){};
+            return new RecyclerView.ViewHolder(emptyView) {
+            };
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(resourceId, parent, false);
             MyViewHolder holder = new MyViewHolder(view);
@@ -45,7 +46,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
-            MyViewHolder vh=(MyViewHolder)holder;
+            MyViewHolder vh = (MyViewHolder) holder;
             noter not = notes.get(position);
             String[] time = not.space.split("_");
             vh.tvTime.setText(time[0] + "/" + time[1] + "/" + time[2]);
@@ -120,14 +121,12 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void add(List<noter> note) {
         //增加数据
         int position = notes.size();
-        System.out.println("position:" + position);
         notes.addAll(position, note);
         notifyItemInserted(position);
 
     }
 
     public void flash(boolean mode) {
-        System.out.println("flash mode:" + mode);
         if (mode) {
             notes = cacheInfo.moreNotes;
             cacheInfo.notes = cacheInfo.moreNotes;
@@ -135,9 +134,7 @@ public class MomentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             notes = myCacheInfo.moreNotes;
             myCacheInfo.notes = cacheInfo.moreNotes;
         }
-
         int position = notes.size();
-        System.out.println("position:" + position);
         notifyDataSetChanged();
     }
 

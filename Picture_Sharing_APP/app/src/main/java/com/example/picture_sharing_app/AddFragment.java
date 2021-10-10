@@ -65,20 +65,20 @@ public class AddFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //点击发布后出发的事件
-                if(imgByte!=null) {
-                    if(title.getText().length()!=0){
-                        if(subtitle.getText().length()!=0){
-                            Server.AddToServer(imgByte, new addInfo(title.getText().toString(), subtitle.getText().toString(),imgByte.length));
+                if (imgByte != null) {
+                    if (title.getText().length() != 0) {
+                        if (subtitle.getText().length() != 0) {
+                            Server.AddToServer(imgByte, new addInfo(title.getText().toString(), subtitle.getText().toString(), imgByte.length));
                             clear();
                             Intent i = new Intent(context, MainActivity.class);
                             startActivity(i);
-                        }else{
+                        } else {
                             Toast.makeText(context, "请输入描述内容！", Toast.LENGTH_SHORT).show();
                         }
-                    }else{
+                    } else {
                         Toast.makeText(context, "请输入标题！", Toast.LENGTH_SHORT).show();
                     }
-                }else{
+                } else {
                     Toast.makeText(context, "请选择一张图片！", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -133,69 +133,23 @@ public class AddFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Uri selectedImage = data.getData(); //获取系统返回的照片的Uri
-
-//        File file = new File(Uri2PathUtil.getRealPathFromUri(this.context,selectedImage));
-//        System.out.println(selectedImage.getPath());
-//        FileInputStream in = null;
-//        int total=(int) file.length();
-//        System.out.println("total="+total);
-//        imgByte=new byte[total];
-//        int hasGet=0;int len;int count=0;
-//        boolean finished=false;
-//        try {
-//            in = new FileInputStream(file);
-//            while (true){
-//                count=in.available();
-//                if(count>0){
-//                    if(hasGet+count>total){
-//                        if(count>total){
-//                            len=total;
-//                        }else {
-//                            len=total-hasGet;
-//                        }
-//                    }else {
-//                        len=count;
-//                    }
-//
-//                    in.read(imgByte,hasGet,len);
-//                    if(total==(hasGet+len)){
-//                        finished=true;
-//                    }
-//                    hasGet+=count;
-//                    if(finished){
-//                        System.out.println("---------------------------finished");
-//                        break;
-//                    }
-//                }
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-
         ivaddview.setImageURI(selectedImage);
-        imgByte=getImageByte(selectedImage);
+        imgByte = getImageByte(selectedImage);
     }
 
-    public byte[] getImageByte(Uri uri)
-    {
-       // uri.get
+    public byte[] getImageByte(Uri uri) {
         Bitmap bitmap = null;
         try {
             bitmap = MediaStore.Images.Media.getBitmap(this.context.getContentResolver(), uri);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Bitmap bitmap=imageView.getDrawingCache();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         return baos.toByteArray();
     }
 
-    private void clear(){
+    private void clear() {
         ivaddview.setImageDrawable(null);
         title.setText(null);
         subtitle.setText(null);

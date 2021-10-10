@@ -31,16 +31,15 @@ public class MainFragment extends Fragment {
     private MomentsAdapter momentsAdapter = null;
     private RecyclerView recyclerView;
     private Context context = null;
-    private SmartRefreshLayout refreshLayout ;//刷新布局
-    private static int index=0;
+    private SmartRefreshLayout refreshLayout;//刷新布局
+    private static int index = 0;
+
     public MainFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     private static Handler handler = new Handler();
@@ -48,7 +47,6 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         context = getActivity();
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         recyclerView = view.findViewById(R.id.comments_list);
@@ -56,13 +54,11 @@ public class MainFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(llm);
         System.out.println("fresh one time");
-        if(!cacheInfo.finished) {
+        if (!cacheInfo.finished) {
             flashView(index);
-        }else {
+        } else {
             refreshData();
         }
-
-
         //下拉刷新
         refreshLayout.setRefreshHeader(new ClassicsHeader(context));
         //上拉加载
@@ -72,12 +68,12 @@ public class MainFragment extends Fragment {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 //momentsAdapter=null;
-                Server.ThreadToServer(new flash(0,true,-1),1);
-                new Thread(){
+                Server.ThreadToServer(new flash(0, true, -1), 1);
+                new Thread() {
                     @Override
                     public void run() {
                         super.run();
-                        int i=10;
+                        int i = 10;
                         while (!cacheInfo.moreFinished) {
                             try {
                                 sleep(1000);
@@ -87,10 +83,10 @@ public class MainFragment extends Fragment {
                             i--;
                             if (i == 0) break;
                         }
-                        if(cacheInfo.moreFinished){
-                            cacheInfo.moreFinished=false;
-                            index=0;
-                            Runnable runnable=new Runnable() {
+                        if (cacheInfo.moreFinished) {
+                            cacheInfo.moreFinished = false;
+                            index = 0;
+                            Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
                                     momentsAdapter.flash(true);
@@ -108,13 +104,13 @@ public class MainFragment extends Fragment {
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
-                index+=5;
-                Server.ThreadToServer(new flash(index,true,-1),1);
-                new Thread(){
+                index += 5;
+                Server.ThreadToServer(new flash(index, true, -1), 1);
+                new Thread() {
                     @Override
                     public void run() {
                         super.run();
-                        int i=10;
+                        int i = 10;
                         while (!cacheInfo.moreFinished) {
                             try {
                                 sleep(1000);
@@ -124,9 +120,9 @@ public class MainFragment extends Fragment {
                             i--;
                             if (i == 0) break;
                         }
-                        if(cacheInfo.moreFinished){
-                            cacheInfo.moreFinished=false;
-                            Runnable runnable=new Runnable() {
+                        if (cacheInfo.moreFinished) {
+                            cacheInfo.moreFinished = false;
+                            Runnable runnable = new Runnable() {
                                 @Override
                                 public void run() {
                                     momentsAdapter.add(cacheInfo.moreNotes);
@@ -137,17 +133,13 @@ public class MainFragment extends Fragment {
                         }
                     }
                 }.start();
-
-
             }
         });
-
-
         return view;
     }
 
     private void flashView(int index) {
-        Server.ThreadToServer(new flash(index,true,-1),0);
+        Server.ThreadToServer(new flash(index, true, -1), 0);
         refreshData();
     }
 
@@ -170,30 +162,23 @@ public class MainFragment extends Fragment {
                             momentsAdapter = new MomentsAdapter(context, R.layout.list_item, cacheInfo.notes);
                             recyclerView.setAdapter(momentsAdapter);
                             //监听item点击事件
-
                             momentsAdapter.setOnItemClickListener(new MomentsAdapter.OnItemClickListener() {
-
                                 @Override
                                 public void OnItemClick(View v, int pos) {
-                                    Toast.makeText(getActivity(),pos+"", Toast.LENGTH_SHORT).show();//获取item的用户名数据
-                                    Intent i = new Intent(context,MomentActivity.class);
-                                    i.putExtra("pos",pos);
-                                    i.putExtra("mode",true);
+                                    Intent i = new Intent(context, MomentActivity.class);
+                                    i.putExtra("pos", pos);
+                                    i.putExtra("mode", true);
                                     startActivity(i);
                                 }
                             });
                         }
                     };
                     handler.post(runnable);
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }.start();
-        // LinearLayoutManager llm = new LinearLayoutManager(context);
-        //recyclerView.setLayoutManager(llm);
     }
 
 }

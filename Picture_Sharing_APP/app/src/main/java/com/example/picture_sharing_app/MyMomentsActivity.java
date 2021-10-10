@@ -32,7 +32,6 @@ public class MyMomentsActivity extends AppCompatActivity {
     private static int index = 0;
     private SmartRefreshLayout refreshLayout;//刷新布局
     private static Handler handler = new Handler();
-    private TextView tvnopic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +45,18 @@ public class MyMomentsActivity extends AppCompatActivity {
         myToolbar.setNavigationOnClickListener(new View.OnClickListener() {  //返回按钮点击事件
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                Intent i=new Intent(MyMomentsActivity.this,MainActivity.class);
+                startActivity(i);
             }
         });
         refreshLayout = findViewById(R.id.mymoments_refresh);
         LinearLayoutManager ll = new LinearLayoutManager(MyMomentsActivity.this);
         recyclerView.setLayoutManager(ll);
-        flashView(index);//获取数据
-        refreshData();
+        if (!myCacheInfo.finished) {
+            flashView(index);
+        } else {
+            refreshData();
+        }
         //下拉刷新
         refreshLayout.setRefreshHeader(new ClassicsHeader(MyMomentsActivity.this));
         //上拉加载
@@ -85,14 +88,23 @@ public class MyMomentsActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     momentsAdapter.flash(false);
+                                    recyclerView.setAdapter(momentsAdapter);
                                     refreshlayout.finishRefresh(0/*,false*/);//传入false表示刷新失败
+                                    momentsAdapter.setOnItemClickListener(new MomentsAdapter.OnItemClickListener() {
+                                        @Override
+                                        public void OnItemClick(View v, int pos) {
+                                            Intent i = new Intent(MyMomentsActivity.this, MomentActivity.class);
+                                            i.putExtra("pos", pos);
+                                            i.putExtra("mode", false);
+                                            startActivity(i);
+                                        }
+                                    });
                                 }
                             };
                             handler.post(runnable);
                         }
                     }
                 }.start();
-
             }
         });
         //为上拉下载添加事件
@@ -128,8 +140,6 @@ public class MyMomentsActivity extends AppCompatActivity {
                         }
                     }
                 }.start();
-
-
             }
         });
     }
@@ -140,6 +150,7 @@ public class MyMomentsActivity extends AppCompatActivity {
 
     private void flashView(int index) {
         Server.ThreadToServer(new flash(index, false, User.userInfo.get("uid").getAsInt()), 2);
+        refreshData();
     }
 
     private void refreshData() {
@@ -161,9 +172,7 @@ public class MyMomentsActivity extends AppCompatActivity {
                             momentsAdapter = new MomentsAdapter(MyMomentsActivity.this, R.layout.list_item, myCacheInfo.notes);
                             recyclerView.setAdapter(momentsAdapter);
                             //监听item点击事件
-
                             momentsAdapter.setOnItemClickListener(new MomentsAdapter.OnItemClickListener() {
-
                                 @Override
                                 public void OnItemClick(View v, int pos) {
                                     Intent i = new Intent(MyMomentsActivity.this, MomentActivity.class);
@@ -175,11 +184,9 @@ public class MyMomentsActivity extends AppCompatActivity {
                         }
                     };
                     handler.post(runnable);
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
         }.start();
     }

@@ -96,7 +96,12 @@ public class MomentActivity extends AppCompatActivity {
                                 public void onClick(View v) {
                                     Server.DeleteNote(id);
                                     Intent i = new Intent(MomentActivity.this, MyMomentsActivity.class);
-                                    i.putExtra("refresh",1);
+                                    myCacheInfo.moreFinished = false;
+                                    myCacheInfo.notes = null;
+                                    myCacheInfo.finished = false;
+                                    myCacheInfo.moreLengths = null;
+                                    myCacheInfo.moreNotes = null;
+                                    myCacheInfo.lengths = null;
                                     startActivity(i);
                                 }
                             }).setNegativeButton("取消", new View.OnClickListener() {

@@ -31,7 +31,6 @@ public class PersonFragment extends Fragment {
     private Button btndesignprofile;
     private TextView tvmymoments;
     private ImageView ivsetting;
-
     //个人信息
     private TextView name;//姓名
     private TextView sex;//性别
@@ -65,9 +64,6 @@ public class PersonFragment extends Fragment {
         sex.setText(User.userInfo.get("sex").getAsString());
         subscription.setText(User.userInfo.get("subscription").getAsString());
         head.setImageBitmap(User.headBitmap);
-        //System.out.println(User.headBitmap.);
-        //head
-
         tvmymoments = view.findViewById(R.id.tv_mymoments);
         btndesignprofile = view.findViewById(R.id.btn_person_profile);//编辑个人资料按钮
         ivsetting = view.findViewById(R.id.person_gotosetting);//设置按钮
@@ -93,7 +89,5 @@ public class PersonFragment extends Fragment {
             }
         });
         return view;
-
     }
-
 }
